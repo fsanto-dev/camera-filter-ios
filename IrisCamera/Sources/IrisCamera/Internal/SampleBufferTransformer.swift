@@ -9,8 +9,15 @@ struct SampleBufferTransformer {
             fatalError()
         }
 
-        #warning("Implementation to invert colors in pixel buffer")
+        let ciImage = CIImage(cvImageBuffer: pixelBuffer)
+        let ciContext = CIContext()
+        let invertColorFilter = CIFilter(name: "CIColorInvert")
 
+        invertColorFilter?.setValue(ciImage, forKey: kCIInputImageKey)
+
+        if let outputImage = invertColorFilter?.outputImage {
+            ciContext.render(outputImage, to: pixelBuffer)
+        }
 
         guard let result = try? pixelBuffer.mapToSampleBuffer(timestamp: videoSampleBuffer.presentationTimeStamp) else {
             fatalError()
